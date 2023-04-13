@@ -2,8 +2,10 @@ package com.example.servicio;
 
 import java.util.List;
 
-import com.example.modelo.Profesor;
+import org.springframework.stereotype.Service;
 
+import com.example.modelo.Profesor;
+@Service
 public interface ProfesorServicio {
 	
 	public List<Profesor> findAll(); 
@@ -16,7 +18,7 @@ public interface ProfesorServicio {
 	
 	public long contarRegistro();
 	
-	
+
 	
 	
 }
