@@ -14,22 +14,24 @@ import lombok.Setter;
 public class Profesor {
 	
 	@Id
-	@Column(name = "nro_documento")
+	@Column(name = "cedula",updatable = false)
 	private long id;
-	private String tipo_documento;
+	@Column(nullable = true)
 	private String nombre;
+	@Column(nullable = true)
 	private String apellido;
+	@Column(nullable = true, unique = true)
 	private String email;
+	@Column(nullable = true, unique = true)
 	private String telefono;
 	private long id_carrera;
 	
 	public Profesor() {
 	}
 
-	public Profesor(long id, String tipo_documento, String nombre, String apellido, String email, String telefono,
+	public Profesor(long id, String nombre, String apellido, String email, String telefono,
 			long id_carrera) {
 		this.id = id;
-		this.tipo_documento = tipo_documento;
 		this.nombre = nombre;
 		this.apellido = apellido;
 		this.email = email;
@@ -44,15 +46,7 @@ public class Profesor {
 	public void setId(long id) {
 		this.id = id;
 	}
-
-	public String getTipo_documento() {
-		return tipo_documento;
-	}
-
-	public void setTipo_documento(String tipo_documento) {
-		this.tipo_documento = tipo_documento;
-	}
-
+	
 	public String getNombre() {
 		return nombre;
 	}

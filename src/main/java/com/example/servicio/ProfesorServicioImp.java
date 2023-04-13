@@ -48,4 +48,14 @@ public class ProfesorServicioImp implements ProfesorServicio{
 		return (List<Profesor>) proDao.findAll();
 	}
 
+	
+
+	
+	
+
+	
+
+	
+	
+
 }

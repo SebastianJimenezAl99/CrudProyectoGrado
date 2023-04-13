@@ -29,13 +29,18 @@ public class ProfesorControlador {
 	@GetMapping(value = "profesor")
 	public ResponseEntity<Object> get(){
 		Map<String, Object> map = new HashMap<String, Object>();
-		try {
-			List<Profesor> list = profesorServicio.findAll();
-			return new ResponseEntity<Object>(list,HttpStatus.OK);
-		} catch (Exception e) {
-			map.put("Mensaje de error: ", e.getMessage());
-			return new ResponseEntity<>(map , HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+		if (profesorServicio.contarRegistro()==0) {
+			map.put("Mensaje:  ", "No existe ningun registro");
+			return new ResponseEntity<>(map , HttpStatus.OK);
+		} else {
+			try {
+				List<Profesor> list = profesorServicio.findAll();
+				return new ResponseEntity<Object>(list,HttpStatus.OK);
+			} catch (Exception e) {
+				map.put("Mensaje de error L: ", e.getMessage());
+				return new ResponseEntity<>(map , HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+		}	
 	}
 	
 	@GetMapping(value = "profesor/{id}")
@@ -45,7 +50,7 @@ public class ProfesorControlador {
 			return new ResponseEntity<Object>(data,HttpStatus.OK);
 		} catch (Exception e) {
 			Map<String, Object> map = new HashMap<String, Object>();
-			map.put("Mensaje de error: ", e.getMessage());
+			map.put("Mensaje de error BPI: ", e.getMessage());
 			return new ResponseEntity<>(map , HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
@@ -53,13 +58,19 @@ public class ProfesorControlador {
 	@PostMapping(value = "profesor")
 	public ResponseEntity<Object> create(@RequestBody Profesor Profesor){
 		Map<String, Object> map = new HashMap<String, Object>();
-		try {
-			Profesor res = profesorServicio.guardar(Profesor);
-			return new ResponseEntity<Object>(res,HttpStatus.OK);
-		} catch (Exception e) {
-			map.put("Mensaje de error: ", e.getMessage());
+		if (profesorServicio.encontrarPorId(Profesor.getId())== null) {
+			try {
+				Profesor res = profesorServicio.guardar(Profesor);
+				return new ResponseEntity<Object>(res,HttpStatus.OK);
+			} catch (Exception e) {
+				map.put("Mensaje de error C: ", e.getMessage());
+				return new ResponseEntity<>(map , HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+		} else {
+			map.put("Mensaje de error:", "El profesor con cedula "+Profesor.getId()+" ya se encuentra registado");
 			return new ResponseEntity<>(map , HttpStatus.INTERNAL_SERVER_ERROR);
 		}
+			
 	}
 	
 	
@@ -69,19 +80,18 @@ public class ProfesorControlador {
 		try {
 			
 			Profesor currentProfe = profesorServicio.encontrarPorId(id);
-			//currentProfe.setId(profesor.getId());
+			currentProfe.setId(id);
 			currentProfe.setNombre(profesor.getNombre());
 			currentProfe.setApellido(profesor.getApellido());
 			currentProfe.setEmail(profesor.getEmail());
 			currentProfe.setTelefono(profesor.getTelefono());
-			currentProfe.setTipo_documento(profesor.getTipo_documento());
 			currentProfe.setId_carrera(profesor.getId_carrera());
 			
-			Profesor res = profesorServicio.guardar(profesor);
+			Profesor res = profesorServicio.guardar(currentProfe);
 			
 			return new ResponseEntity<Object>(res,HttpStatus.OK);
 		} catch (Exception e) {
-			map.put("Mensaje de error: ", e.getMessage());
+			map.put("Mensaje de error A: ", e.getMessage());
 			return new ResponseEntity<>(map , HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
@@ -96,7 +106,7 @@ public class ProfesorControlador {
 			return new ResponseEntity<Object>(map,HttpStatus.OK);
 		} catch (Exception e) {
 			
-			map.put("Mensaje de error: ", e.getMessage());
+			map.put("Mensaje de error E: ", e.getMessage());
 			return new ResponseEntity<>(map , HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
@@ -109,7 +119,7 @@ public class ProfesorControlador {
 			map.put("Cantidad de resgistros de profesores: ", cantidad);
 			return new ResponseEntity<Object>(map,HttpStatus.OK);
 		} catch (Exception e) {
-			map.put("Mensaje de error: ", e.getMessage());
+			map.put("Mensaje de error Co: ", e.getMessage());
 			return new ResponseEntity<>(map , HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}

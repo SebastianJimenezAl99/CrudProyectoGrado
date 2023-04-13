@@ -17,4 +17,6 @@ public interface ProfesorServicio {
 	public long contarRegistro();
 	
 	
+	
+	
 }
