@@ -16,26 +16,26 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import com.example.modelo.Profesor;
-import com.example.servicio.ProfesorServicio;
+import com.example.modelo.Coordinador;
+import com.example.servicio.CoordinadorServicio;
 
 
 @RestController
-@RequestMapping("/api/v1/")
-public class ProfesorControlador {
+@RequestMapping("/api/v2/")
+public class CoordinadorControlador {
 	
 	@Autowired
-	private ProfesorServicio profesorServicio;
+	private CoordinadorServicio coordinadorServicio;
 	
-	@GetMapping(value = "profesor")
+	@GetMapping(value = "coordinador")
 	public ResponseEntity<Object> get(){
 		Map<String, Object> map = new HashMap<String, Object>();
-		if (profesorServicio.contarRegistro()==0) {
+		if (coordinadorServicio.contarRegistro()==0) {
 			map.put("Mensaje:  ", "No existe ningun registro");
 			return new ResponseEntity<>(map , HttpStatus.OK);
 		} else {
 			try {
-				List<Profesor> list = profesorServicio.findAll();
+				List<Coordinador> list = coordinadorServicio.findAll();
 				return new ResponseEntity<Object>(list,HttpStatus.OK);
 			} catch (Exception e) {
 				map.put("Mensaje de error L: ", e.getMessage());
@@ -44,10 +44,10 @@ public class ProfesorControlador {
 		}	
 	}
 	
-	@GetMapping(value = "profesor/{id}")
+	@GetMapping(value = "coordinador/{id}")
 	public ResponseEntity<Object> getById(@PathVariable Long id){
 		Map<String, Object> map = new HashMap<String, Object>();
-		Profesor data = profesorServicio.encontrarPorId(id);
+		Coordinador data = coordinadorServicio.encontrarPorId(id);
 		
 		if (data!=null) {
 			try {
@@ -57,68 +57,68 @@ public class ProfesorControlador {
 				return new ResponseEntity<>(map , HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 		} else {
-			map.put("Mensaje de error BPI: ", "No se encuentra ningun profesor con numero de cedula: "+id);
+			map.put("Mensaje de error BPI: ", "No se encuentra ningun coordinador con numero de cedula: "+id);
 			return new ResponseEntity<>(map , HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		
 			
 	}
 	
-	@PostMapping(value = "profesor")
-	public ResponseEntity<Object> create(@RequestBody Profesor pro){
+	@PostMapping(value = "coordinador")
+	public ResponseEntity<Object> create(@RequestBody Coordinador cor){
 		Map<String, Object> map = new HashMap<String, Object>();
 		
-		if (profesorServicio.encontrarPorId(pro.getId())== null) {
+		if (coordinadorServicio.encontrarPorId(cor.getId())== null) {
 			try {
-				Profesor res = profesorServicio.guardar(pro);
+				Coordinador res = coordinadorServicio.guardar(cor);
 				return new ResponseEntity<Object>(res,HttpStatus.OK);
 			} catch (Exception e) {
 				map.put("Mensaje de error C: ", e.getMessage()+" Podria ser que el correo y/o numero de telefono ya esten registrados");
 				return new ResponseEntity<>(map , HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 		} else {
-			map.put("Mensaje de error:", "El profesor con cedula "+pro.getId()+" ya se encuentra registado");
+			map.put("Mensaje de error:", "El coordinador con cedula "+cor.getId()+" ya se encuentra registado");
 			return new ResponseEntity<>(map , HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 			
 	}
 	
 	
-	@PutMapping(value = "profesor/{id}")
-	public ResponseEntity<Object> actualizar(@RequestBody Profesor profesor, @PathVariable Long id){
+	@PutMapping(value = "coordinador/{id}")
+	public ResponseEntity<Object> actualizar(@RequestBody Coordinador coordinador, @PathVariable Long id){
 		Map<String, Object> map = new HashMap<String, Object>();
-		Profesor currentProfe = profesorServicio.encontrarPorId(id);
-		if (currentProfe!=null) {
+		Coordinador currentCoordinador = coordinadorServicio.encontrarPorId(id);
+		if (currentCoordinador!=null) {
+			
 			try {
+		
+				currentCoordinador.setNombre(coordinador.getNombre());
+				currentCoordinador.setApellido(coordinador.getApellido());
+				currentCoordinador.setEmail(coordinador.getEmail());
+				currentCoordinador.setTelefono(coordinador.getTelefono());
 				
-				currentProfe.setNombre(profesor.getNombre());
-				currentProfe.setApellido(profesor.getApellido());
-				currentProfe.setEmail(profesor.getEmail());
-				currentProfe.setTelefono(profesor.getTelefono());
-				currentProfe.setId_carrera(profesor.getId_carrera());
-				
-				Profesor res = profesorServicio.guardar(currentProfe);
+				Coordinador res = coordinadorServicio.guardar(currentCoordinador);
 				
 				return new ResponseEntity<Object>(res,HttpStatus.OK);
 			} catch (Exception e) {
 				map.put("Mensaje de error A: ", e.getMessage());
 				return new ResponseEntity<>(map , HttpStatus.INTERNAL_SERVER_ERROR);
 			}
-		} else {
-			map.put("Mensaje A: ", "El numero de cedula "+id+" no se encuentra registrado");
+		}else {
+			map.put("Mensaje A: ", "No se ha encontrado coordinador con cedula: "+id);
 			return new ResponseEntity<>(map , HttpStatus.OK);
 		}
 			
 	}
 	
-	@DeleteMapping(value = "profesor/{id}")
+	@DeleteMapping(value = "coordinador/{id}")
 	public ResponseEntity<Object> eliminar(@PathVariable Long id){
 		Map<String, Object> map = new HashMap<String, Object>();
-		Profesor currentProfe = profesorServicio.encontrarPorId(id);
-		if (currentProfe!=null) {
+		Coordinador currentCoordinador = coordinadorServicio.encontrarPorId(id);
+		if (currentCoordinador!=null) {
 			try {
 				
-				profesorServicio.eliminar(currentProfe);
+				coordinadorServicio.eliminar(currentCoordinador);
 				map.put("Deleted: ", true);
 				return new ResponseEntity<Object>(map,HttpStatus.OK);
 			} catch (Exception e) {
@@ -132,12 +132,12 @@ public class ProfesorControlador {
 			
 	}
 	
-	@GetMapping(value = "profesor/cantidad")
+	@GetMapping(value = "coordinador/cantidad")
 	public ResponseEntity<Object> contar(){
 		Map<String, Object> map = new HashMap<String, Object>();
 		try {
-			Long cantidad = profesorServicio.contarRegistro();
-			map.put("Cantidad de resgistros de profesores: ", cantidad);
+			Long cantidad = coordinadorServicio.contarRegistro();
+			map.put("Cantidad de resgistros de coordinadores: ", cantidad);
 			return new ResponseEntity<Object>(map,HttpStatus.OK);
 		} catch (Exception e) {
 			map.put("Mensaje de error Co: ", e.getMessage());
